@@ -1,4 +1,5 @@
 New in 1.0.
+Made it so clearing or starting a new recording over an existing take now properly resets the volume, pitch, and pan back to their defaults and removes any effect, so each recording can start fresh.
 Made it so the effects tab can now apply its effect to your recording in real time. Pick an effect from the list to turn it on and adjust its sliders as you listen, or choose none to turn effects back off. Only one effect can be active at a time for now.
 Reorganized the audio player into tabs. The player tab holds play, save, and clear; the controls tab has volume, pitch, and pan sliders that adjust your recording in real time; and the effects tab lets you dial in reverb, echo, and other effects. The play button stays on the player tab, but on the controls and effects tabs you can press enter while on a slider to start or stop playback without leaving it.
 Renamed the main menu's play button to show recording, since it opens the audio player rather than playing directly, and the player no longer starts playing automatically when it opens.

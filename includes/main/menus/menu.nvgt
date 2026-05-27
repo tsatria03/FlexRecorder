@@ -48,6 +48,12 @@ void mainmenu()
             if (startBtn >= 0 && form.is_pressed(startBtn))
             {
                 rec.stop_playback();
+                // Clear DSP effects and reset volume/pitch/pan to defaults so the new recording starts clean.
+                clear_effects();
+                apply_effects();
+                rec.playback.volume = 0;
+                rec.playback.pitch = 100;
+                rec.playback.pan = 0;
                 rec.clear_recording();
                 has_recording = false;
                 if (rec.start_recording())
@@ -395,6 +401,12 @@ void show_recording()
         if (form.is_pressed(clearBtn))
         {
             rec.stop_playback();
+            // Clear DSP effects and reset volume/pitch/pan to defaults so the next recording starts clean.
+            clear_effects();
+            apply_effects();
+            rec.playback.volume = 0;
+            rec.playback.pitch = 100;
+            rec.playback.pan = 0;
             rec.clear_recording();
             has_recording = false;
             return;
