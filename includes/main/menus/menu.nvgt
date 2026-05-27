@@ -279,6 +279,10 @@ void show_recording()
             if (rec.playback.playing) form.set_caption(playBtn, "&Stop playback");
         }
         wait(5);
+        // The form consumes Enter for lists (but not sliders or buttons), so only pre-read it here when the effect list is focused. Reading it unconditionally would swallow Enter from the buttons.
+        bool enter_on_control = false;
+        if (form.get_current_focus() == effect_list && key_pressed(KEY_RETURN))
+            enter_on_control = true;
         form.monitor();
         // Apply the control sliders to the playback in real time.
         rec.playback.volume = form.get_slider(volSlider);
@@ -357,14 +361,15 @@ void show_recording()
             discard_recording();
             return;
         }
-        // The play/stop button, or Enter while focused on any slider (controls or effects), toggles playback.
-        bool toggle_play = form.is_pressed(playBtn);
-        if (!toggle_play && key_pressed(KEY_RETURN))
+        // Sliders don't have their Enter consumed by the form, so detect those after monitor().
+        if (!enter_on_control && key_pressed(KEY_RETURN))
         {
-            int focus = form.get_current_focus();
-            if (focus >= 0 && (focus == effect_list || focus == volSlider || focus == pitchSlider || focus == panSlider || focus == s1 || focus == s2 || focus == s3 || focus == s4 || focus == s5 || focus == s6))
-                toggle_play = true;
+            int efocus = form.get_current_focus();
+            if (efocus == volSlider || efocus == pitchSlider || efocus == panSlider || efocus == s1 || efocus == s2 || efocus == s3 || efocus == s4 || efocus == s5 || efocus == s6)
+                enter_on_control = true;
         }
+        // The play/stop button, or Enter while focused on the effect list or any slider, toggles playback.
+        bool toggle_play = form.is_pressed(playBtn) || enter_on_control;
         if (toggle_play)
         {
             if (rec.playback.playing)

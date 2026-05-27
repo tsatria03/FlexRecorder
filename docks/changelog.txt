@@ -1,4 +1,5 @@
 New in 1.0.
+Fixed the enter key in the audio player: it now starts and stops playback when you're on the effect list or a slider, and it activates the play, save, and clear buttons on the player tab again.
 Made it so saved recordings now include whatever volume, pitch, pan, and effect you set in the audio player, so the file you save sounds exactly like what you hear during playback.
 Made it so saving a recording now keeps it open in the audio player instead of clearing it, so you can keep playing, tweaking, or saving it again afterward.
 Made it so stopping a recording now takes you straight into the audio player, which no longer needs a separate button to open and doesn't start playing on its own. If you leave the player without saving, the recording is discarded and you return to the main menu.
