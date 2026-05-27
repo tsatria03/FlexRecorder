@@ -14,13 +14,12 @@ void select_default_device()
     if (devs.length() > 0) rec.set_recording_device(0);
 }
 
-// Save the current recording as <default name> <timestamp>.mp3 so saves never overwrite each other.
+// Save the current recording as <timestamp>.mp3 so saves never overwrite each other.
 void save_current_recording()
 {
     string stamp = get_date(false, true) + " " + get_time(false, false);
     stamp = stamp.replace(":", "-", true).replace("/", "-", true);
-    string base = default_filename.trim_whitespace_left().trim_whitespace_right();
-    string filename = sanitize_filename(base == "" ? stamp : base + " " + stamp);
+    string filename = sanitize_filename(stamp);
     string wav_path = recordingsPath + filename + ".wav";
     string mp3_path = recordingsPath + filename + ".mp3";
     if (rec.save_recording(wav_path))

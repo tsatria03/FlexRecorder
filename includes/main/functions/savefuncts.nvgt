@@ -31,12 +31,10 @@ break;
 }
 }
 }
-if(st.d.exists("default_filename")) default_filename=st.read_string("default_filename");
 }
 void writepreffs()
 {
 st.add("playdev",playdev);
 st.add("recdev",recdev);
-st.add("default_filename",default_filename);
 st.save();
 }

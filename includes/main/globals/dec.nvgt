@@ -5,13 +5,12 @@ string playdev="Default";
 string recdev="Default";
 string recordingsPath = "data/recordings/";
 string savePath = "data/saves/";
-string default_filename = "recording";
 string version="1.0";
 
 audio_form form;
 instance appstence("fr");
 kh keyhook;
 recording rec;
-savedata st("data/saves/options.rec", "");
+savedata st("data/saves/options.rec", "pDMKn068WWvbEG1Ri9s8J3h8wRwXfHjIv6zCZIsu2iphzrrajEgZM1DB72zu0UitdYXTe3PENvTATzF4XH31XxRa7pGOovJIi5nDdBoZpCHjwoP729D7pS2p7sWQYxcGXDeOyfyJJY6wIouXdklqmdTUWREqt1pOkkdsRgPCdWH56nYWqd9JYOPh1kwVQohCAoQXi4Az2ftN4XL1yBacG9hNl5H9PZNMCyhElmdhWSk9DZHZzXD");
 sound_pool temp, pool;
 virtual_dialogs vd;
