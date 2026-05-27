@@ -41,10 +41,7 @@ void save_current_recording()
         run("lib/lame.exe", "-b 192 \"" + wav_path + "\" \"" + mp3_path + "\"", true, true);
         if (file_exists(mp3_path)) file_delete(wav_path);
         if (file_exists(mp3_path))
-        {
             dlg("Recording saved as " + filename + ".mp3. Press enter to continue.");
-            has_recording = false;
-        }
         else
             dlg("Conversion failed. WAV file kept at " + wav_path + ". Press enter to continue.");
     }

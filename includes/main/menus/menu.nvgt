@@ -362,7 +362,7 @@ void show_recording()
         if (!toggle_play && key_pressed(KEY_RETURN))
         {
             int focus = form.get_current_focus();
-            if (focus >= 0 && (focus == volSlider || focus == pitchSlider || focus == panSlider || focus == s1 || focus == s2 || focus == s3 || focus == s4 || focus == s5 || focus == s6))
+            if (focus >= 0 && (focus == effect_list || focus == volSlider || focus == pitchSlider || focus == panSlider || focus == s1 || focus == s2 || focus == s3 || focus == s4 || focus == s5 || focus == s6))
                 toggle_play = true;
         }
         if (toggle_play)
@@ -384,7 +384,6 @@ void show_recording()
         {
             rec.stop_playback();
             save_current_recording();
-            return;
         }
         if (form.is_pressed(clearBtn))
         {
