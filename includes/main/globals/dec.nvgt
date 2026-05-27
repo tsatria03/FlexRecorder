@@ -1,6 +1,7 @@
 bool is_recording = false;
 bool has_recording = false;
 string recordingsPath = "data/recordings/";
+string default_filename = "recording";
 string version="1.0";
 
 audio_form form;

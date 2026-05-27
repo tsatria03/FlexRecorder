@@ -60,3 +60,9 @@ if (isNegative)
 result = "-" + result;
 return result;
 }
+
+// Strip characters that aren't valid in a Windows filename.
+string sanitize_filename(string name)
+{
+    return name.replace("\\", "-", true).replace("/", "-", true).replace(":", "-", true).replace("*", "-", true).replace("?", "-", true).replace("\"", "-", true).replace("<", "-", true).replace(">", "-", true).replace("|", "-", true);
+}

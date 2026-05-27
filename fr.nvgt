@@ -32,6 +32,6 @@ exit();
 else
 {
 wait(500);
-recmenu();
+mainmenu();
 }
 }

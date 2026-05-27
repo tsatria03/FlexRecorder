@@ -1,0 +1,42 @@
+// Pick the system default recording device on startup if nothing is selected yet.
+void select_default_device()
+{
+    if (rec.recording_device != uint(-1)) return;
+    string[]@ devs = rec.list_recording_devices(true);
+    for (uint i = 0; i < devs.length(); i++)
+    {
+        if (devs[i].lower().find_first("default") >= 0)
+        {
+            rec.set_recording_device(i);
+            return;
+        }
+    }
+    if (devs.length() > 0) rec.set_recording_device(0);
+}
+
+// Save the current recording as <default name> <timestamp>.mp3 so saves never overwrite each other.
+void save_current_recording()
+{
+    string stamp = get_date(false, true) + " " + get_time(false, false);
+    stamp = stamp.replace(":", "-", true).replace("/", "-", true);
+    string base = default_filename.trim_whitespace_left().trim_whitespace_right();
+    string filename = sanitize_filename(base == "" ? stamp : base + " " + stamp);
+    string wav_path = recordingsPath + filename + ".wav";
+    string mp3_path = recordingsPath + filename + ".mp3";
+    if (rec.save_recording(wav_path))
+    {
+        speak("Saving recording, please wait.");
+        run("lib/lame.exe", "-b 192 \"" + wav_path + "\" \"" + mp3_path + "\"", true, true);
+        if (file_exists(mp3_path)) file_delete(wav_path);
+        if (file_exists(mp3_path))
+        {
+            dlg("Recording saved as " + filename + ".mp3. Press enter to continue.");
+            has_recording = false;
+        }
+        else
+            dlg("Conversion failed. WAV file kept at " + wav_path + ". Press enter to continue.");
+    }
+    else
+        dlg("Failed to save recording. Press enter to continue.");
+}
+
