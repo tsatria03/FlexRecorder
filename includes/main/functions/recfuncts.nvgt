@@ -35,7 +35,8 @@ void save_current_recording()
     string filename = sanitize_filename(stamp);
     string wav_path = recordingsPath + filename + ".wav";
     string mp3_path = recordingsPath + filename + ".mp3";
-    if (rec.save_recording(wav_path))
+    // Render the playback sound (with its effects, volume, pan, and pitch baked in) rather than the raw capture.
+    if (rec.playback.save(wav_path))
     {
         speak("Saving recording, please wait.");
         run("lib/lame.exe", "-b 192 \"" + wav_path + "\" \"" + mp3_path + "\"", true, true);

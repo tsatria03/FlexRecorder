@@ -1,4 +1,5 @@
 New in 1.0.
+Made it so saved recordings now include whatever volume, pitch, pan, and effect you set in the audio player, so the file you save sounds exactly like what you hear during playback.
 Made it so saving a recording now keeps it open in the audio player instead of clearing it, so you can keep playing, tweaking, or saving it again afterward.
 Made it so stopping a recording now takes you straight into the audio player, which no longer needs a separate button to open and doesn't start playing on its own. If you leave the player without saving, the recording is discarded and you return to the main menu.
 Made it so clearing or starting a new recording over an existing take now properly resets the volume, pitch, and pan back to their defaults and removes any effect, so each recording can start fresh.
