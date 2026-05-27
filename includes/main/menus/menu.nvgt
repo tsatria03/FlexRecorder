@@ -101,69 +101,7 @@ void show_recording()
         if (do_build)
         {
             do_build = false;
-            // Save the outgoing effect's slider values before the rebuild so they're restored when you switch back. (0 is "off", nothing to save.)
-            if (last_effect_pos == 1)
-            {
-                echo_s[0] = form.get_slider(s1);
-                echo_s[1] = form.get_slider(s2);
-                echo_s[2] = form.get_slider(s3);
-                echo_s[3] = form.get_slider(s4);
-            }
-            else if (last_effect_pos == 2)
-            {
-                rev_s[0] = form.get_slider(s1);
-                rev_s[1] = form.get_slider(s2);
-                rev_s[2] = form.get_slider(s3);
-                rev_s[3] = form.get_slider(s4);
-                rev_s[4] = form.get_slider(s5);
-            }
-            else if (last_effect_pos == 3)
-            {
-                low_s[0] = form.get_slider(s1);
-                low_s[1] = form.get_slider(s2);
-                low_s[2] = form.get_slider(s3);
-            }
-            else if (last_effect_pos == 4)
-            {
-                highpass_s[0] = form.get_slider(s1);
-                highpass_s[1] = form.get_slider(s2);
-                highpass_s[2] = form.get_slider(s3);
-            }
-            else if (last_effect_pos == 5)
-            {
-                chorus_s[0] = form.get_slider(s1);
-                chorus_s[1] = form.get_slider(s2);
-                chorus_s[2] = form.get_slider(s3);
-                chorus_s[3] = form.get_slider(s4);
-                chorus_s[4] = form.get_slider(s5);
-                chorus_s[5] = form.get_slider(s6);
-            }
-            else if (last_effect_pos == 6)
-            {
-                dist_s[0] = form.get_slider(s1);
-                dist_s[1] = form.get_slider(s2);
-                dist_s[2] = form.get_slider(s3);
-                dist_s[3] = form.get_slider(s4);
-                dist_s[4] = form.get_slider(s5);
-            }
-            else if (last_effect_pos == 7)
-            {
-                phaser_s[0] = form.get_slider(s1);
-                phaser_s[1] = form.get_slider(s2);
-                phaser_s[2] = form.get_slider(s3);
-                phaser_s[3] = form.get_slider(s4);
-                phaser_s[4] = form.get_slider(s5);
-                phaser_s[5] = form.get_slider(s6);
-            }
-            else if (last_effect_pos == 8)
-            {
-                flanger_s[0] = form.get_slider(s1);
-                flanger_s[1] = form.get_slider(s2);
-                flanger_s[2] = form.get_slider(s3);
-                flanger_s[3] = form.get_slider(s4);
-                flanger_s[4] = form.get_slider(s5);
-                flanger_s[5] = form.get_slider(s6);
-            }
+            // Switching effects resets that effect's sliders to their defaults, so we never save the outgoing values back into the default arrays.
             form.reset();
             form.create_window("Audio player", false, true, last_effect_pos != -1);
             tabs = form.create_tab_panel("Category");
