@@ -1,4 +1,6 @@
 New in 1.0.
+Added a dedicated audio player window, opened with the play recording button, that holds the play, save, and clear controls in one place and starts playing your recording as soon as it opens.
+Made it so the play button now shows whether it will play or stop, switching its label as playback starts and stops, and if the recording device drops out mid-recording the app now stops cleanly instead of getting stuck.
 Made it so your playback and recording devices are now remembered between sessions, so you don't have to set them up every time you open the app.
 Added a playback device chooser to the preferences screen, letting you pick which output device your recordings play back through.
 Redesigned the main menu so everything is a button: start recording, and once you stop, play, save, clear, or record again. Your recording device and the default filename for saved recordings now live in a preferences screen, and pressing escape exits the app unless you're recording.

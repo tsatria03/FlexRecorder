@@ -6,7 +6,7 @@ void mainmenu()
         wait(5);
         form.reset();
         form.create_window("FlexRecorder", false);
-        int startBtn = -1, stopBtn = -1, playBtn = -1, clearBtn = -1, saveBtn = -1, prefBtn = -1;
+        int startBtn = -1, stopBtn = -1, playBtn = -1, prefBtn = -1;
         if (is_recording)
         {
             stopBtn = form.create_button("S&top recording");
@@ -14,8 +14,6 @@ void mainmenu()
         else if (has_recording)
         {
             playBtn = form.create_button("&Play recording");
-            saveBtn = form.create_button("Sa&ve recording");
-            clearBtn = form.create_button("&Clear recording");
             startBtn = form.create_button("&Start recording");
             prefBtn = form.create_button("Pre&ferences");
         }
@@ -38,6 +36,14 @@ void mainmenu()
                     rec.stop_playback();
                     exit();
                 }
+            }
+            // Guard against the capture device dropping out mid-recording: if recording stops on its own, finalize and rebuild the menu.
+            if (is_recording && !rec.recording)
+            {
+                has_recording = rec.stop_recording();
+                is_recording = false;
+                speak(has_recording ? "Recording stopped unexpectedly." : "Recording stopped unexpectedly with no audio saved.");
+                break;
             }
             if (startBtn >= 0 && form.is_pressed(startBtn))
             {
@@ -65,27 +71,7 @@ void mainmenu()
             }
             if (playBtn >= 0 && form.is_pressed(playBtn))
             {
-                if (rec.playback.playing)
-                {
-                    rec.stop_playback();
-                    speak("Stopped recorded audio.");
-                }
-                else
-                {
-                    rec.play();
-                    speak("Playing recorded audio.");
-                }
-            }
-            if (clearBtn >= 0 && form.is_pressed(clearBtn))
-            {
-                rec.stop_playback();
-                rec.clear_recording();
-                has_recording = false;
-                break;
-            }
-            if (saveBtn >= 0 && form.is_pressed(saveBtn))
-            {
-                save_current_recording();
+                show_recording();
                 break;
             }
             if (prefBtn >= 0 && form.is_pressed(prefBtn))
@@ -93,6 +79,65 @@ void mainmenu()
                 prefsmenu();
                 break;
             }
+        }
+    }
+}
+
+void show_recording()
+{
+    form.reset();
+    form.create_window("Audio player", false);
+    int playBtn = form.create_button("&Play recording");
+    int saveBtn = form.create_button("Sa&ve recording");
+    int clearBtn = form.create_button("&Clear recording");
+    form.focus(playBtn);
+    rec.play();
+    form.set_caption(playBtn, "&Stop playback");
+    bool seen_playing = false;
+    while (true)
+    {
+        wait(5);
+        form.monitor();
+        // Revert the button label when playback finishes on its own (only after we've actually seen it playing, to avoid a startup race).
+        if (rec.playback.playing)
+            seen_playing = true;
+        else if (seen_playing && form.get_caption(playBtn) == "Stop playback")
+        {
+            seen_playing = false;
+            form.set_caption(playBtn, "&Play recording");
+        }
+        if (key_pressed(KEY_ESCAPE))
+        {
+            rec.stop_playback();
+            return;
+        }
+        if (form.is_pressed(playBtn))
+        {
+            if (rec.playback.playing)
+            {
+                rec.stop_playback();
+                form.set_caption(playBtn, "&Play recording");
+                speak("Stopped recorded audio.");
+            }
+            else
+            {
+                rec.play();
+                form.set_caption(playBtn, "&Stop playback");
+                speak("Playing recorded audio.");
+            }
+        }
+        if (form.is_pressed(saveBtn))
+        {
+            rec.stop_playback();
+            save_current_recording();
+            return;
+        }
+        if (form.is_pressed(clearBtn))
+        {
+            rec.stop_playback();
+            rec.clear_recording();
+            has_recording = false;
+            return;
         }
     }
 }
@@ -297,7 +342,7 @@ effect_params[0] = form.get_slider(s1);
 effect_params[1] = form.get_slider(s2);
 effect_params[2] = form.get_slider(s3);
 effect_params[3] = form.get_slider(s4);
-spawn_effect_space("$echo:echo4:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":0", "$echo");
+add_effect("$echo:echo4:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":0", "$echo");
 }
 else if (saved_effect_pos == 1)
 {
@@ -307,7 +352,7 @@ effect_params[1] = form.get_slider(s2);
 effect_params[2] = form.get_slider(s3);
 effect_params[3] = form.get_slider(s4);
 effect_params[4] = form.get_slider(s5);
-spawn_effect_space("$reverb:freeverb:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4], "$reverb");
+add_effect("$reverb:freeverb:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4], "$reverb");
 }
 else if (saved_effect_pos == 2)
 {
@@ -315,7 +360,7 @@ effect_params.resize(3);
 effect_params[0] = form.get_slider(s1);
 effect_params[1] = form.get_slider(s2);
 effect_params[2] = form.get_slider(s3);
-spawn_effect_space("$lowpass:lowpass:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2], "$lowpass");
+add_effect("$lowpass:lowpass:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2], "$lowpass");
 }
 else if (saved_effect_pos == 3)
 {
@@ -323,7 +368,7 @@ effect_params.resize(3);
 effect_params[0] = form.get_slider(s1);
 effect_params[1] = form.get_slider(s2);
 effect_params[2] = form.get_slider(s3);
-spawn_effect_space("$highpass:highpass:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2], "$highpass");
+add_effect("$highpass:highpass:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2], "$highpass");
 }
 else if (saved_effect_pos == 4)
 {
@@ -334,7 +379,7 @@ effect_params[2] = form.get_slider(s3);
 effect_params[3] = form.get_slider(s4);
 effect_params[4] = form.get_slider(s5);
 effect_params[5] = form.get_slider(s6);
-spawn_effect_space("$chorus:chorus:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4]+":"+effect_params[5], "$chorus");
+add_effect("$chorus:chorus:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4]+":"+effect_params[5], "$chorus");
 }
 else if (saved_effect_pos == 5)
 {
@@ -344,7 +389,7 @@ effect_params[1] = form.get_slider(s2);
 effect_params[2] = form.get_slider(s3);
 effect_params[3] = form.get_slider(s4);
 effect_params[4] = form.get_slider(s5);
-spawn_effect_space("$distortion:distortion:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4], "$distortion");
+add_effect("$distortion:distortion:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4], "$distortion");
 }
 else if (saved_effect_pos == 6)
 {
@@ -355,7 +400,7 @@ effect_params[2] = form.get_slider(s3);
 effect_params[3] = form.get_slider(s4);
 effect_params[4] = form.get_slider(s5);
 effect_params[5] = form.get_slider(s6);
-spawn_effect_space("$phaser:phaser:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4]+":"+effect_params[5], "$phaser");
+add_effect("$phaser:phaser:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4]+":"+effect_params[5], "$phaser");
 }
 else if (saved_effect_pos == 7)
 {
@@ -366,9 +411,9 @@ effect_params[2] = form.get_slider(s3);
 effect_params[3] = form.get_slider(s4);
 effect_params[4] = form.get_slider(s5);
 effect_params[5] = form.get_slider(s6);
-spawn_effect_space("$flanger:flanger:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4]+":"+effect_params[5], "$flanger");
+add_effect("$flanger:flanger:"+effect_params[0]+":"+effect_params[1]+":"+effect_params[2]+":"+effect_params[3]+":"+effect_params[4]+":"+effect_params[5], "$flanger");
 }
-apply_effect_pools();
+apply_effects();
 speak("Effect added.");
 return;
 }

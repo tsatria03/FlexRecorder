@@ -1,0 +1,44 @@
+double[] effect_params;
+
+class effect
+{
+string id;
+string fx_string;
+string clear_tag;
+effect() {}
+effect(string id, string fx, string ctag)
+{
+this.id = id;
+fx_string = fx;
+clear_tag = ctag;
+}
+}
+
+effect@[] effects(0);
+
+void apply_effects()
+{
+string[] tags = {"$reverb", "$echo", "$lowpass", "$highpass", "$chorus", "$distortion", "$phaser", "$flanger"};
+for (uint t = 0; t < tags.length(); t++)
+{
+bool found = false;
+for (uint i = 0; i < effects.length(); i++)
+{
+if (effects[i].clear_tag != tags[t]) continue;
+rec.playback.set_fx(effects[i].fx_string);
+found = true;
+break;
+}
+if (!found) rec.playback.set_fx(tags[t]);
+}
+}
+void add_effect(string fx, string ctag)
+{
+string id = generate_custom_token(random(5, 10), "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+effects.insert_last(effect(id, fx, ctag));
+}
+
+void clear_effects()
+{
+effects.resize(0);
+}

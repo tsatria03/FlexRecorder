@@ -22,7 +22,6 @@ void main()
 keyhook.install();
 sound_pitch_lower_limit = 0.05;
 sound_pitch_upper_limit = 10.00;
-initialize_sound_pools();
 show_window("FlexRecorder, version "+version);
 if(appstence.is_already_running)
 {
