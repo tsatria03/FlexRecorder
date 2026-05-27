@@ -1,0 +1,42 @@
+void readpreffs()
+{
+st.load();
+if(st.d.exists("playdev"))
+{
+playdev=st.read_string("playdev");
+string[]@devices=get_sound_output_devices();
+devices.remove_at(0);
+for(uint i=0; i<devices.length(); i++)
+{
+if(devices[i]==playdev)
+{
+sound_output_device=i+1;
+break;
+}
+}
+}
+if(st.d.exists("recdev"))
+{
+recdev=st.read_string("recdev");
+string[]@devices=rec.list_recording_devices(true);
+for(uint i=0; i<devices.length(); i++)
+{
+string dev_name=devices[i];
+int colon_pos=dev_name.find_first(": ");
+if(colon_pos>=0) dev_name=dev_name.substr(colon_pos+2);
+if(dev_name==recdev)
+{
+rec.set_recording_device(i);
+break;
+}
+}
+}
+if(st.d.exists("default_filename")) default_filename=st.read_string("default_filename");
+}
+void writepreffs()
+{
+st.add("playdev",playdev);
+st.add("recdev",recdev);
+st.add("default_filename",default_filename);
+st.save();
+}

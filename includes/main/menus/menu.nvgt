@@ -1,6 +1,5 @@
 void mainmenu()
 {
-    if (!directory_exists(recordingsPath)) directory_create(recordingsPath);
     select_default_device();
     while (true)
     {
@@ -104,6 +103,45 @@ void preferences()
     form.reset();
     form.create_window("Preferences", false);
     int nameBox = form.create_input_box("Default recording filename", default_filename);
+    string[]@ out_devices = get_sound_output_devices();
+    int playbackList = form.create_list("Playback device", 0);
+    int selected_playback = 0;
+    // The default device sits first, then every other device sorted alphabetically. Index 0 is the reserved slot, so it's skipped.
+    for (uint i = 1; i < out_devices.length(); i++)
+    {
+        if (out_devices[i].lower().find_first("default") < 0) continue;
+        form.add_list_item(playbackList, out_devices[i], ""+i);
+        if (out_devices[i] == playdev) selected_playback = form.get_list_count(playbackList) - 1;
+    }
+    string[] out_names;
+    int[] out_indices;
+    for (uint i = 1; i < out_devices.length(); i++)
+    {
+        if (out_devices[i].lower().find_first("default") >= 0) continue;
+        out_names.insert_last(out_devices[i]);
+        out_indices.insert_last(int(i));
+    }
+    // Insertion sort the remaining devices by name, case-insensitive, keeping each device's original index.
+    for (uint a = 1; a < out_names.length(); a++)
+    {
+        string nk = out_names[a];
+        int ik = out_indices[a];
+        int b = int(a) - 1;
+        while (b >= 0 && out_names[b].lower() > nk.lower())
+        {
+            out_names[b + 1] = out_names[b];
+            out_indices[b + 1] = out_indices[b];
+            b--;
+        }
+        out_names[b + 1] = nk;
+        out_indices[b + 1] = ik;
+    }
+    for (uint a = 0; a < out_names.length(); a++)
+    {
+        form.add_list_item(playbackList, out_names[a], ""+out_indices[a]);
+        if (out_names[a] == playdev) selected_playback = form.get_list_count(playbackList) - 1;
+    }
+    if (form.get_list_count(playbackList) > 0) form.set_list_position(playbackList, selected_playback);
     int deviceList = form.create_list("Recording device", 0);
     int selected_device = 0;
     // The default device sits first, then every other device sorted alphabetically.
@@ -114,7 +152,7 @@ void preferences()
         int colon_pos = dev_name.find_first(": ");
         if (colon_pos >= 0) dev_name = dev_name.substr(colon_pos + 2);
         form.add_list_item(deviceList, dev_name, ""+i);
-        if (i == rec.recording_device) selected_device = form.get_list_count(deviceList) - 1;
+        if (dev_name == recdev) selected_device = form.get_list_count(deviceList) - 1;
     }
     string[] dev_names;
     int[] dev_indices;
@@ -145,7 +183,7 @@ void preferences()
     for (uint a = 0; a < dev_names.length(); a++)
     {
         form.add_list_item(deviceList, dev_names[a], ""+dev_indices[a]);
-        if (dev_indices[a] == int(rec.recording_device)) selected_device = form.get_list_count(deviceList) - 1;
+        if (dev_names[a] == recdev) selected_device = form.get_list_count(deviceList) - 1;
     }
     if (form.get_list_count(deviceList) > 0) form.set_list_position(deviceList, selected_device);
     int okBtn = form.create_button("&Okay", true);
@@ -159,10 +197,21 @@ void preferences()
         if (form.is_pressed(cancelBtn)) return;
         if (form.is_pressed(okBtn))
         {
+            int playPos = form.get_list_position(playbackList);
+            if (playPos >= 0)
+            {
+                sound_output_device = string_to_int(form.get_list_item_id(playbackList, playPos));
+                playdev = form.get_list_item(playbackList, playPos);
+            }
             int devPos = form.get_list_position(deviceList);
-            if (devPos >= 0) rec.set_recording_device(string_to_int(form.get_list_item_id(deviceList, devPos)));
+            if (devPos >= 0)
+            {
+                rec.set_recording_device(string_to_int(form.get_list_item_id(deviceList, devPos)));
+                recdev = form.get_list_item(deviceList, devPos);
+            }
             string nm = form.get_text(nameBox).trim_whitespace_left().trim_whitespace_right();
             if (nm != "") default_filename = nm;
+            writepreffs();
             return;
         }
     }

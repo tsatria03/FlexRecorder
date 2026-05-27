@@ -1,6 +1,10 @@
 bool is_recording = false;
 bool has_recording = false;
+
+string playdev="Default";
+string recdev="Default";
 string recordingsPath = "data/recordings/";
+string savePath = "data/saves/";
 string default_filename = "recording";
 string version="1.0";
 
@@ -8,5 +12,6 @@ audio_form form;
 instance appstence("fr");
 kh keyhook;
 recording rec;
+savedata st("data/saves/options.rec", "");
 sound_pool temp, pool;
 virtual_dialogs vd;

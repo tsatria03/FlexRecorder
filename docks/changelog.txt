@@ -1,3 +1,5 @@
 New in 1.0.
+Made it so playback devices, recording devices, and default filenames are now remembered between sessions, so you don't have to set them up every time you open the app.
+Added a playback device chooser to the preferences screen, letting you pick which output device your recordings play back through.
 Redesigned the main menu so everything is a button: start recording, and once you stop, play, save, clear, or record again. Your recording device and the default filename for saved recordings now live in a preferences screen, and pressing escape exits the app unless you're recording.
 Made it so microphone input devices now appear in the recording device list. The list is ordered with the system default device first, followed by every other device sorted alphabetically.
