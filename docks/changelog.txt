@@ -1,6 +1,7 @@
 New in 1.0.
+Organized the audio player into tabs. The player tab holds play, save, and clear; the controls tab has volume, pitch, and pan sliders that adjust your recording in real time; and the effects tab lets you dial in reverb, echo, and other effects. The play button stays on the player tab, but on the controls and effects tabs you can press enter while on a slider to start or stop playback without leaving it.
 Renamed the main menu's play button to show recording, since it opens the audio player rather than playing directly, and the player no longer starts playing automatically when it opens.
-Added a dedicated audio player window, opened with the play recording button, that holds the play, save, and clear controls in one place and starts playing your recording as soon as it opens.
+Added a dedicated audio player window, opened with the play recording button, that holds the play, save, and clear controls in one place.
 Made it so the play button now shows whether it will play or stop, switching its label as playback starts and stops, and if the recording device drops out mid-recording the app now stops cleanly instead of getting stuck.
 Made it so your playback and recording devices are now remembered between sessions, so you don't have to set them up every time you open the app.
 Added a playback device chooser to the preferences screen, letting you pick which output device your recordings play back through.
