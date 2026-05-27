@@ -14,6 +14,19 @@ void select_default_device()
     if (devs.length() > 0) rec.set_recording_device(0);
 }
 
+// Throw away the current recording and reset playback to a clean slate (no effects, default volume/pitch/pan).
+void discard_recording()
+{
+    rec.stop_playback();
+    clear_effects();
+    apply_effects();
+    rec.playback.volume = 0;
+    rec.playback.pitch = 100;
+    rec.playback.pan = 0;
+    rec.clear_recording();
+    has_recording = false;
+}
+
 // Save the current recording as <timestamp>.mp3 so saves never overwrite each other.
 void save_current_recording()
 {

@@ -4,25 +4,25 @@ void mainmenu()
     while (true)
     {
         wait(5);
+        // A finished recording goes straight into the audio player; the player is the has-recording screen.
+        if (has_recording)
+        {
+            show_recording();
+            continue;
+        }
         form.reset();
         form.create_window("FlexRecorder", false);
-        int startBtn = -1, stopBtn = -1, playBtn = -1, prefBtn = -1;
+        int startBtn = -1, stopBtn = -1, prefBtn = -1;
         if (is_recording)
         {
             stopBtn = form.create_button("S&top recording");
-        }
-        else if (has_recording)
-        {
-            playBtn = form.create_button("Sho&w recording");
-            startBtn = form.create_button("&Start recording");
-            prefBtn = form.create_button("Pre&ferences");
         }
         else
         {
             startBtn = form.create_button("&Start recording");
             prefBtn = form.create_button("Pre&ferences");
         }
-        form.focus(is_recording ? stopBtn : (has_recording ? playBtn : startBtn));
+        form.focus(is_recording ? stopBtn : startBtn);
         while (true)
         {
             wait(5);
@@ -37,7 +37,7 @@ void mainmenu()
                     exit();
                 }
             }
-            // Guard against the capture device dropping out mid-recording: if recording stops on its own, finalize and rebuild the menu.
+            // Guard against the capture device dropping out mid-recording: if recording stops on its own, finalize and open the player (if any audio was captured).
             if (is_recording && !rec.recording)
             {
                 has_recording = rec.stop_recording();
@@ -47,15 +47,7 @@ void mainmenu()
             }
             if (startBtn >= 0 && form.is_pressed(startBtn))
             {
-                rec.stop_playback();
-                // Clear DSP effects and reset volume/pitch/pan to defaults so the new recording starts clean.
-                clear_effects();
-                apply_effects();
-                rec.playback.volume = 0;
-                rec.playback.pitch = 100;
-                rec.playback.pan = 0;
-                rec.clear_recording();
-                has_recording = false;
+                discard_recording();
                 if (rec.start_recording())
                 {
                     is_recording = true;
@@ -74,11 +66,6 @@ void mainmenu()
                 }
                 else
                     speak("Failed to stop recording.");
-            }
-            if (playBtn >= 0 && form.is_pressed(playBtn))
-            {
-                show_recording();
-                break;
             }
             if (prefBtn >= 0 && form.is_pressed(prefBtn))
             {
@@ -366,7 +353,8 @@ void show_recording()
         }
         if (key_pressed(KEY_ESCAPE))
         {
-            rec.stop_playback();
+            // Leaving the player without saving discards the recording and returns to the idle menu.
+            discard_recording();
             return;
         }
         // The play/stop button, or Enter while focused on any slider (controls or effects), toggles playback.
@@ -400,15 +388,7 @@ void show_recording()
         }
         if (form.is_pressed(clearBtn))
         {
-            rec.stop_playback();
-            // Clear DSP effects and reset volume/pitch/pan to defaults so the next recording starts clean.
-            clear_effects();
-            apply_effects();
-            rec.playback.volume = 0;
-            rec.playback.pitch = 100;
-            rec.playback.pan = 0;
-            rec.clear_recording();
-            has_recording = false;
+            discard_recording();
             return;
         }
     }
