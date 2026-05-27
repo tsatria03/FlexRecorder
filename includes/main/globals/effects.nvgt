@@ -1,5 +1,3 @@
-double[] effect_params;
-
 class effect
 {
 string id;
