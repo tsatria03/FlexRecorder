@@ -13,7 +13,7 @@ void mainmenu()
         }
         else if (has_recording)
         {
-            playBtn = form.create_button("&Play recording");
+            playBtn = form.create_button("Sho&w recording");
             startBtn = form.create_button("&Start recording");
             prefBtn = form.create_button("Pre&ferences");
         }
@@ -91,8 +91,6 @@ void show_recording()
     int saveBtn = form.create_button("Sa&ve recording");
     int clearBtn = form.create_button("&Clear recording");
     form.focus(playBtn);
-    rec.play();
-    form.set_caption(playBtn, "&Stop playback");
     bool seen_playing = false;
     while (true)
     {
