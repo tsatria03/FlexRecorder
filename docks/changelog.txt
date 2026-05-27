@@ -1,0 +1,2 @@
+New in 1.0.
+Made it so microphone input devices now appear in the recording device list. The list is ordered with the system default device first, followed by every other device sorted alphabetically.
