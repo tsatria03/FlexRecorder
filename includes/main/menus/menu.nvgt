@@ -48,7 +48,7 @@ void mainmenu()
             if (startBtn >= 0 && form.is_pressed(startBtn))
             {
                 discard_recording();
-                if (rec.start_recording())
+                if (rec.start_recording(false, false, audio_samplerate, audio_channel))
                 {
                     is_recording = true;
                     break;
@@ -341,6 +341,30 @@ void prefsmenu()
     string[]@ all_devices = rec.list_recording_devices(true);
     form.reset();
     form.create_window("Preferences", false);
+    // Capture and conversion settings, listed before the device choosers. Each item's id holds the raw value to store.
+    int channelList = form.create_list("Audio channel", 0);
+    string[] chan_labels = {"Mono", "Stereo"};
+    uint[] chan_values = {1, 2};
+    for (uint i = 0; i < chan_labels.length(); i++)
+    {
+        form.add_list_item(channelList, chan_labels[i], "" + chan_values[i]);
+        if (chan_values[i] == audio_channel) form.set_list_position(channelList, i);
+    }
+    int rateList = form.create_list("Sample rate", 0);
+    string[] rate_labels = {"11.025 kHz", "22.05 kHz", "44.1 kHz", "48 kHz"};
+    uint[] rate_values = {11025, 22050, 44100, 48000};
+    for (uint i = 0; i < rate_labels.length(); i++)
+    {
+        form.add_list_item(rateList, rate_labels[i], "" + rate_values[i]);
+        if (rate_values[i] == audio_samplerate) form.set_list_position(rateList, i);
+    }
+    int qualityList = form.create_list("Conversion quality", 0);
+    uint[] quality_values = {32, 64, 96, 128, 160, 192, 224, 256, 320};
+    for (uint i = 0; i < quality_values.length(); i++)
+    {
+        form.add_list_item(qualityList, quality_values[i] + " kbps", "" + quality_values[i]);
+        if (quality_values[i] == mp3quality) form.set_list_position(qualityList, i);
+    }
     string[]@ out_devices = get_sound_output_devices();
     int playbackList = form.create_list("Playback device", 0);
     int selected_playback = 0;
@@ -426,7 +450,7 @@ void prefsmenu()
     if (form.get_list_count(deviceList) > 0) form.set_list_position(deviceList, selected_device);
     int okBtn = form.create_button("&Okay", true);
     int cancelBtn = form.create_button("&Cancel");
-    form.focus(playbackList);
+    form.focus(channelList);
     while (true)
     {
         wait(5);
@@ -435,6 +459,12 @@ void prefsmenu()
         if (form.is_pressed(cancelBtn)) return;
         if (form.is_pressed(okBtn))
         {
+            int chanPos = form.get_list_position(channelList);
+            if (chanPos >= 0) audio_channel = uint(string_to_int(form.get_list_item_id(channelList, chanPos)));
+            int ratePos = form.get_list_position(rateList);
+            if (ratePos >= 0) audio_samplerate = uint(string_to_int(form.get_list_item_id(rateList, ratePos)));
+            int qualPos = form.get_list_position(qualityList);
+            if (qualPos >= 0) mp3quality = uint(string_to_int(form.get_list_item_id(qualityList, qualPos)));
             int playPos = form.get_list_position(playbackList);
             if (playPos >= 0)
             {

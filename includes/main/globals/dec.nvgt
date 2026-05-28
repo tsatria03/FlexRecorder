@@ -3,6 +3,9 @@ bool has_recording = false;
 
 string playdev="Default";
 string recdev="Default";
+uint audio_channel = 2;        // 1 = mono, 2 = stereo
+uint audio_samplerate = 44100; // capture sample rate in Hz
+uint mp3quality = 192;         // MP3 conversion bitrate in kbps
 string recordingsPath = "data/recordings/";
 string savePath = "data/saves/";
 string version="1.0";

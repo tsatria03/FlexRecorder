@@ -31,10 +31,16 @@ break;
 }
 }
 }
+if(st.d.exists("audio_channel")) audio_channel=uint(st.read_int("audio_channel"));
+if(st.d.exists("audio_samplerate")) audio_samplerate=uint(st.read_int("audio_samplerate"));
+if(st.d.exists("mp3quality")) mp3quality=uint(st.read_int("mp3quality"));
 }
 void writepreffs()
 {
 st.add("playdev",playdev);
 st.add("recdev",recdev);
+st.add("audio_channel",int(audio_channel));
+st.add("audio_samplerate",int(audio_samplerate));
+st.add("mp3quality",int(mp3quality));
 st.save();
 }

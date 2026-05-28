@@ -46,10 +46,13 @@ Preferences
 
 The preferences screen lets you configure the following:
 
+Audio channel: whether recordings are captured in mono (one channel) or stereo (two channels). Mono makes smaller files; stereo is the default.
+Sample rate: how detailed the recording is, from 11.025 kHz up to 48 kHz. Higher rates capture more of the sound's high end and sound clearer, while lower rates make smaller files. 44.1 kHz (CD quality) is the default.
+Conversion quality: the bitrate, from 32 kbps up to 320 kbps, used when your recording is saved to an MP3. Higher values sound closer to the original and make larger files; lower values make smaller files. 192 kbps is the default.
 Playback device: which output (speakers or headphones) your recordings play through.
 Recording device: which microphone the app records from.
 
-Each list shows your system default device first, followed by every other device in alphabetical order. Press Okay to apply and remember your choices, or Cancel to leave them unchanged. Your device choices are saved and restored automatically the next time you open the app.
+The two device lists show your system default device first, followed by every other device in alphabetical order. Press Okay to apply and remember your choices, or Cancel to leave them unchanged. All of these settings are saved and restored automatically the next time you open the app.
 
 Effect reference
 

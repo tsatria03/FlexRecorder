@@ -39,7 +39,7 @@ void save_current_recording()
     if (rec.playback.save(wav_path))
     {
         speak("Saving recording, please wait.");
-        run("lib/lame.exe", "-b 192 \"" + wav_path + "\" \"" + mp3_path + "\"", true, true);
+        run("lib/lame.exe", "-b " + mp3quality + " \"" + wav_path + "\" \"" + mp3_path + "\"", true, true);
         if (file_exists(mp3_path)) file_delete(wav_path);
         if (file_exists(mp3_path))
             dlgmessage("Recording saved as " + filename + ".mp3. Press enter to continue.");
