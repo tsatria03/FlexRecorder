@@ -30,8 +30,8 @@ exit();
 }
 else
 {
+if (!directory_exists(preffsPath)) directory_create(preffsPath);
 if (!directory_exists(recordingsPath)) directory_create(recordingsPath);
-if (!directory_exists(savePath)) directory_create(savePath);
 readpreffs();
 wait(500);
 mainmenu();

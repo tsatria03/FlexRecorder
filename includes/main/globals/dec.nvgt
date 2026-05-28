@@ -2,19 +2,18 @@ bool is_recording = false;
 bool is_paused = false;
 bool has_recording = false;
 
-string playdev="Default";
-string recdev="Default";
 uint audio_channel = 2;        // 1 = mono, 2 = stereo
 uint audio_samplerate = 44100; // capture sample rate in Hz
 uint mp3quality = 192;         // MP3 conversion bitrate in kbps
+
+string playdev="Default";
+string recdev="Default";
+string preffsPath = "data/preffs/";
 string recordingsPath = "data/recordings/";
-string savePath = "data/saves/";
 string version="1.0";
 
 audio_form form;
 instance appstence("fr");
 kh keyhook;
 recording rec;
-savedata st("data/saves/options.rec", "pDMKn068WWvbEG1Ri9s8J3h8wRwXfHjIv6zCZIsu2iphzrrajEgZM1DB72zu0UitdYXTe3PENvTATzF4XH31XxRa7pGOovJIi5nDdBoZpCHjwoP729D7pS2p7sWQYxcGXDeOyfyJJY6wIouXdklqmdTUWREqt1pOkkdsRgPCdWH56nYWqd9JYOPh1kwVQohCAoQXi4Az2ftN4XL1yBacG9hNl5H9PZNMCyhElmdhWSk9DZHZzXD");
-sound_pool temp;
-virtual_dialogs vd;
+savedata st("data/preffs/options.rec", "pDMKn068WWvbEG1Ri9s8J3h8wRwXfHjIv6zCZIsu2iphzrrajEgZM1DB72zu0UitdYXTe3PENvTATzF4XH31XxRa7pGOovJIi5nDdBoZpCHjwoP729D7pS2p7sWQYxcGXDeOyfyJJY6wIouXdklqmdTUWREqt1pOkkdsRgPCdWH56nYWqd9JYOPh1kwVQohCAoQXi4Az2ftN4XL1yBacG9hNl5H9PZNMCyhElmdhWSk9DZHZzXD");
