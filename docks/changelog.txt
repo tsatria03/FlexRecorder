@@ -1,4 +1,6 @@
 New in 1.0.
+Updated the todo list file with the latest bug fix and feature improvements made to the app.
+Added a readme file to explain how this app works in detail.
 Made it so switching to a different effect now resets that effect's sliders to their default values, giving you a clean starting point each time instead of carrying over your previous tweaks.
 Fixed the enter key in the audio player: it now starts and stops playback when you're on the effect list or a slider, and it activates the play, save, and clear buttons on the player tab again.
 Made it so saved recordings now include whatever volume, pitch, pan, and effect you set in the audio player, so the file you save sounds exactly like what you hear during playback.
