@@ -125,9 +125,10 @@ void show_recording()
     bool do_build = true;
     int last_effect_pos = -1;
     bool seen_playing = false;
+    bool playback_paused = false; // true while playback is paused (a paused sound reports playing == false)
     string last_fx = "force"; // sentinel so the first frame syncs playback to the list (clearing any leftover effect)
     int tab_player = 0, tab_controls = 1, tab_effects = 2;
-    int tabs = -1, playBtn = -1, saveBtn = -1, clearBtn = -1, volSlider = -1, pitchSlider = -1, panSlider = -1, effect_list = -1;
+    int tabs = -1, playBtn = -1, pausePlayBtn = -1, saveBtn = -1, clearBtn = -1, volSlider = -1, pitchSlider = -1, panSlider = -1, resetVolBtn = -1, resetPitchBtn = -1, resetPanBtn = -1, effect_list = -1;
     int s1 = -1, s2 = -1, s3 = -1, s4 = -1, s5 = -1, s6 = -1;
     while (true)
     {
@@ -144,8 +145,11 @@ void show_recording()
             form.add_list_item(tabs, "Effects");
             // Set the active tab before creating controls so each one's tab visibility is assigned correctly.
             form.set_list_position(tabs, (last_effect_pos == -1) ? tab_player : saved_tab);
-            playBtn = form.create_button("&Play recording");
+            playBtn = form.create_button("&Start playback");
             form.assign_to_tab(playBtn, tabs, tab_player);
+            // The pause button is intentionally not assigned to a tab; its visibility is driven manually each frame (player tab + playing/paused) so it only appears while there's something to pause.
+            pausePlayBtn = form.create_button(playback_paused ? "&Resume playback" : "Pause play&back");
+            form.set_state(pausePlayBtn, true, false);
             saveBtn = form.create_button("Sa&ve recording");
             form.assign_to_tab(saveBtn, tabs, tab_player);
             clearBtn = form.create_button("&Clear recording");
@@ -156,6 +160,12 @@ void show_recording()
             form.assign_to_tab(pitchSlider, tabs, tab_controls);
             panSlider = form.create_slider("Pa&n", rec.playback.pan, -100, 100, "", 5);
             form.assign_to_tab(panSlider, tabs, tab_controls);
+            resetVolBtn = form.create_button("Reset &volume");
+            form.assign_to_tab(resetVolBtn, tabs, tab_controls);
+            resetPitchBtn = form.create_button("Reset &pitch");
+            form.assign_to_tab(resetPitchBtn, tabs, tab_controls);
+            resetPanBtn = form.create_button("Reset p&an");
+            form.assign_to_tab(resetPanBtn, tabs, tab_controls);
             effect_list = form.create_list("e&ffect type");
             form.add_list_item(effect_list, "none", "none");
             form.add_list_item(effect_list, "echo", "echo");
@@ -256,10 +266,31 @@ void show_recording()
         if (form.get_current_focus() == effect_list && key_pressed(KEY_RETURN))
             enter_on_control = true;
         form.monitor();
+        // Show the pause button only on the player tab while there's something to pause or resume.
+        form.set_state(pausePlayBtn, true, form.get_list_position(tabs) == tab_player && (rec.playback.playing || playback_paused));
         // Apply the control sliders to the playback in real time.
         rec.playback.volume = form.get_slider(volSlider);
         rec.playback.pitch = form.get_slider(pitchSlider);
         rec.playback.pan = form.get_slider(panSlider);
+        // Reset buttons return each control to its default (volume 0, pitch 100, pan 0), or report that it's already there.
+        if (form.is_pressed(resetVolBtn))
+        {
+            if (form.get_slider(volSlider) == 0)
+                speak("Volume is already reset.");
+            else { form.set_slider(volSlider, 0); speak("Volume reset."); }
+        }
+        if (form.is_pressed(resetPitchBtn))
+        {
+            if (form.get_slider(pitchSlider) == 100)
+                speak("Pitch is already reset.");
+            else { form.set_slider(pitchSlider, 100); speak("Pitch reset."); }
+        }
+        if (form.is_pressed(resetPanBtn))
+        {
+            if (form.get_slider(panSlider) == 0)
+                speak("Pan is already reset.");
+            else { form.set_slider(panSlider, 0); speak("Pan reset."); }
+        }
         // Switching the effect type rebuilds the window (its sliders differ per effect); stay on the effects tab.
         int cur_effect_pos = form.get_list_position(effect_list);
         if (cur_effect_pos != -1 && cur_effect_pos != last_effect_pos)
@@ -319,13 +350,13 @@ void show_recording()
             apply_effects();
             last_fx = cur_fx;
         }
-        // Revert the button label when playback finishes on its own (only after we've actually seen it playing, to avoid a startup race).
+        // Revert the button label when playback finishes on its own (only after we've actually seen it playing, to avoid a startup race). A pause keeps the label as Stop playback, so skip it while paused.
         if (rec.playback.playing)
             seen_playing = true;
-        else if (seen_playing && form.get_caption(playBtn) == "Stop playback")
+        else if (seen_playing && !playback_paused && form.get_caption(playBtn) == "Stop playback")
         {
             seen_playing = false;
-            form.set_caption(playBtn, "&Play recording");
+            form.set_caption(playBtn, "&Start playback");
         }
         if (key_pressed(KEY_ESCAPE))
         {
@@ -344,10 +375,12 @@ void show_recording()
         bool toggle_play = form.is_pressed(playBtn) || enter_on_control;
         if (toggle_play)
         {
-            if (rec.playback.playing)
+            if (rec.playback.playing || playback_paused)
             {
                 rec.stop_playback();
-                form.set_caption(playBtn, "&Play recording");
+                playback_paused = false;
+                form.set_caption(playBtn, "&Start playback");
+                form.set_caption(pausePlayBtn, "Pause play&back");
                 speak("Stopped recorded audio.");
             }
             else
@@ -357,9 +390,31 @@ void show_recording()
                 speak("Playing recorded audio.");
             }
         }
+        // Pause keeps the playback position; the same button resumes from where it left off.
+        if (form.is_pressed(pausePlayBtn))
+        {
+            if (playback_paused)
+            {
+                rec.play();
+                playback_paused = false;
+                form.set_caption(pausePlayBtn, "Pause play&back");
+                form.set_caption(playBtn, "&Stop playback");
+                speak("Playback resumed.");
+            }
+            else if (rec.playback.playing)
+            {
+                rec.pause_playback();
+                playback_paused = true;
+                form.set_caption(pausePlayBtn, "&Resume playback");
+                speak("Playback paused.");
+            }
+        }
         if (form.is_pressed(saveBtn))
         {
             rec.stop_playback();
+            playback_paused = false;
+            form.set_caption(playBtn, "&Start playback");
+            form.set_caption(pausePlayBtn, "Pause play&back");
             save_current_recording();
         }
         if (form.is_pressed(clearBtn))

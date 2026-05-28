@@ -22,7 +22,8 @@ Once you've made a recording, the audio player opens automatically. It's organiz
 
 Player tab
 
-Play recording: starts playback. While it's playing, the button reads Stop playback, so the same button stops it again. Playback also stops on its own when the recording reaches the end.
+Start playback: starts playback. While it's playing, the button reads Stop playback, so the same button stops it again. Playback also stops on its own when the recording reaches the end.
+Pause playback: pauses playback and keeps your place, so you can pick up right where you left off. The button then reads Resume playback, and pressing it again continues from that exact spot. This button only appears while something is playing or paused; a full stop always starts over from the beginning.
 Save recording: writes your recording to a file (see "Saving" below).
 Clear recording: throws the current recording away and returns you to the main menu.
 
@@ -33,6 +34,8 @@ Three sliders that change how your recording sounds, and you'll hear the change 
 Volume: how loud the recording plays. Slide it down to make the sound quieter, or all the way up for full volume.
 Pitch: how high or low the recording sounds. Lower values make it deeper and slower; higher values make it higher and faster, like speeding the recording up.
 Pan: where the sound sits between your left and right ears. Center keeps it balanced in both ears, while sliding left or right moves it toward that side.
+
+After the pan slider you'll find three reset buttons: Reset volume, Reset pitch, and Reset pan. Each one snaps its slider back to its default in a single press. If the slider is already at its default, the button tells you so instead of doing nothing.
 
 Effects tab
 
