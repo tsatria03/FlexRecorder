@@ -1,0 +1,21 @@
+New in 1.0.
+Added reset buttons to the controls tab. After the pan slider, you'll find a reset volume, reset pitch, and reset pan button, each of which snaps its slider back to its default value. Pressing one when the slider is already at its default will tell you that it's already reset.
+Added a pause button to the audio player. While a recording is playing, you can now pause it and resume from the exact spot you left off, instead of only being able to stop and start over. The button appears only while something is playing or paused. Renamed the old play button to say start playback as well.
+Added controls for pauseing, resumeing, and canceling a recording. Alongside the stop button you can now pause a recording and pick it back up where you left off, or cancel it entirely to throw it away and return to the main menu.
+Added audio quality settings to the preferences screen. You can now choose mono or stereo recording, pick a sample rate from 11.025 kHz up to 48 kHz, and set the MP3 conversion quality anywhere from 32 kbps to 320 kbps. These choices are remembered between sessions, just like your device settings.
+Updated the todo list file with the latest bug fix and feature improvements made to the app.
+Added a readme file to explain how this app works in detail.
+Made it so switching to a different effect now resets that effect's sliders to their default values, giving you a clean starting point each time instead of carrying over your previous tweaks.
+Fixed the enter key in the audio player: it now starts and stops playback when you're on the effect list or a slider, and it activates the play, save, and clear buttons on the player tab again.
+Made it so saved recordings now include whatever volume, pitch, pan, and effect you set in the audio player, so the file you save sounds exactly like what you hear during playback.
+Made it so saving a recording now keeps it open in the audio player instead of clearing it, so you can keep playing, tweaking, or saving it again afterward.
+Made it so stopping a recording now takes you straight into the audio player, which no longer needs a separate button to open and doesn't start playing on its own. If you leave the player without saving, the recording is discarded and you return to the main menu.
+Made it so clearing or starting a new recording over an existing take now properly resets the volume, pitch, and pan back to their defaults and removes any effect, so each recording can start fresh.
+Made it so the effects tab can now apply its effect to your recording in real time. Pick an effect from the list to turn it on and adjust its sliders as you listen, or choose none to turn effects back off. Only one effect can be active at a time for now.
+Reorganized the audio player into tabs. The player tab holds play, save, and clear; the controls tab has volume, pitch, and pan sliders that adjust your recording in real time; and the effects tab lets you dial in reverb, echo, and other effects. The play button stays on the player tab, but on the controls and effects tabs you can press enter while on a slider to start or stop playback without leaving it.
+Added a dedicated audio player window that holds the play, save, and clear controls in one place.
+Made it so the play button now shows whether it will play or stop, switching its label as playback starts and stops, and if the recording device drops out mid-recording the app now stops cleanly instead of getting stuck.
+Made it so your playback and recording devices are now remembered between sessions, so you don't have to set them up every time you open the app.
+Added a playback device chooser to the preferences screen, letting you pick which output device your recordings play back through.
+Redesigned the main menu so everything is a button: start a recording, then stop it. Your recording device now lives in a preferences screen, and pressing escape exits the app unless you're recording.
+Made it so microphone input devices now appear in the recording device list. The list is ordered with the system default device first, followed by every other device sorted alphabetically.

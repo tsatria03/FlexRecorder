@@ -1,4 +1,3 @@
-// Pick the system default recording device on startup if nothing is selected yet.
 void select_default_device()
 {
     if (rec.recording_device != uint(-1)) return;
@@ -14,7 +13,6 @@ void select_default_device()
     if (devs.length() > 0) rec.set_recording_device(0);
 }
 
-// Throw away the current recording and reset playback to a clean slate (no effects, default volume/pitch/pan).
 void discard_recording()
 {
     rec.stop_playback();
@@ -27,7 +25,6 @@ void discard_recording()
     has_recording = false;
 }
 
-// Save the current recording as <timestamp>.mp3 so saves never overwrite each other.
 void save_current_recording()
 {
     string stamp = get_date(false, true) + " " + get_time(false, false);
@@ -35,7 +32,6 @@ void save_current_recording()
     string filename = sanitize_filename(stamp);
     string wav_path = recordingsPath + filename + ".wav";
     string mp3_path = recordingsPath + filename + ".mp3";
-    // Render the playback sound (with its effects, volume, pan, and pitch baked in) rather than the raw capture.
     if (rec.playback.save(wav_path))
     {
         speak("Saving recording, please wait.");

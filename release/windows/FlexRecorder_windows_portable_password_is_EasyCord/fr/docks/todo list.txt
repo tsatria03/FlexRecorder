@@ -1,0 +1,9 @@
+####These are the things that need to be finished for future versions of the app.
+
+****Unfinished. Make it so you can stack effects on top of each other.
+****Unfinished. Add a presets manager for the effects tab.
+
+##These are the things that are already finished from earlier versions of the app.
+
+**Finished. Redesign the audio player.
+**Finished. Redesign the main interface.

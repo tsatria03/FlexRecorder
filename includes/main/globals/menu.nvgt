@@ -4,7 +4,6 @@ void mainmenu()
     while (true)
     {
         wait(5);
-        // A finished recording goes straight into the audio player; the player is the has-recording screen.
         if (has_recording)
         {
             show_recording();
@@ -39,7 +38,6 @@ void mainmenu()
                     exit();
                 }
             }
-            // Guard against the capture device dropping out mid-recording: if recording stops on its own, finalize and open the player (if any audio was captured). A paused take looks the same as a dropout, so skip the guard while paused.
             if (is_recording && !is_paused && !rec.recording)
             {
                 has_recording = rec.stop_recording();
@@ -62,7 +60,6 @@ void mainmenu()
             {
                 if (is_paused)
                 {
-                    // Resume by appending onto the captured buffer.
                     if (rec.start_recording(false, true, audio_samplerate, audio_channel))
                     {
                         is_paused = false;
@@ -74,7 +71,6 @@ void mainmenu()
                 }
                 else
                 {
-                    // Pause by stopping capture without loading for playback; the buffer is kept.
                     rec.stop_recording(false);
                     is_paused = true;
                     form.set_caption(pauseBtn, "&Resume recording");
@@ -125,8 +121,8 @@ void show_recording()
     bool do_build = true;
     int last_effect_pos = -1;
     bool seen_playing = false;
-    bool playback_paused = false; // true while playback is paused (a paused sound reports playing == false)
-    string last_fx = "force"; // sentinel so the first frame syncs playback to the list (clearing any leftover effect)
+    bool playback_paused = false;
+    string last_fx = "force";
     int tab_player = 0, tab_controls = 1, tab_effects = 2;
     int tabs = -1, playBtn = -1, pausePlayBtn = -1, saveBtn = -1, clearBtn = -1, volSlider = -1, pitchSlider = -1, panSlider = -1, resetVolBtn = -1, resetPitchBtn = -1, resetPanBtn = -1, effect_list = -1;
     int s1 = -1, s2 = -1, s3 = -1, s4 = -1, s5 = -1, s6 = -1;
@@ -136,18 +132,15 @@ void show_recording()
         if (do_build)
         {
             do_build = false;
-            // Switching effects resets that effect's sliders to their defaults, so we never save the outgoing values back into the default arrays.
             form.reset();
             form.create_window("Audio player", false, true, last_effect_pos != -1);
             tabs = form.create_tab_panel("Category");
             form.add_list_item(tabs, "Player");
             form.add_list_item(tabs, "Controls");
             form.add_list_item(tabs, "Effects");
-            // Set the active tab before creating controls so each one's tab visibility is assigned correctly.
             form.set_list_position(tabs, (last_effect_pos == -1) ? tab_player : saved_tab);
             playBtn = form.create_button("&Start playback");
             form.assign_to_tab(playBtn, tabs, tab_player);
-            // The pause button is intentionally not assigned to a tab; its visibility is driven manually each frame (player tab + playing/paused) so it only appears while there's something to pause.
             pausePlayBtn = form.create_button(playback_paused ? "&Resume playback" : "Pause play&back");
             form.set_state(pausePlayBtn, true, false);
             saveBtn = form.create_button("Sa&ve recording");
@@ -255,24 +248,19 @@ void show_recording()
             if (last_effect_pos == -1)
                 form.focus(playBtn);
             else
-                // Re-focus the list silently; the list's own arrow-navigation already announced the new effect.
                 form.focus_silently(effect_list);
             last_effect_pos = saved_effect_pos;
             if (rec.playback.playing) form.set_caption(playBtn, "&Stop playback");
         }
         wait(5);
-        // The form consumes Enter for lists (but not sliders or buttons), so only pre-read it here when the effect list is focused. Reading it unconditionally would swallow Enter from the buttons.
         bool enter_on_control = false;
         if (form.get_current_focus() == effect_list && key_pressed(KEY_RETURN))
             enter_on_control = true;
         form.monitor();
-        // Show the pause button only on the player tab while there's something to pause or resume.
         form.set_state(pausePlayBtn, true, form.get_list_position(tabs) == tab_player && (rec.playback.playing || playback_paused));
-        // Apply the control sliders to the playback in real time.
         rec.playback.volume = form.get_slider(volSlider);
         rec.playback.pitch = form.get_slider(pitchSlider);
         rec.playback.pan = form.get_slider(panSlider);
-        // Reset buttons return each control to its default (volume 0, pitch 100, pan 0), or report that it's already there.
         if (form.is_pressed(resetVolBtn))
         {
             if (form.get_slider(volSlider) == 0)
@@ -291,7 +279,6 @@ void show_recording()
                 speak("Pan is already reset.");
             else { form.set_slider(panSlider, 0); speak("Pan reset."); }
         }
-        // Switching the effect type rebuilds the window (its sliders differ per effect); stay on the effects tab.
         int cur_effect_pos = form.get_list_position(effect_list);
         if (cur_effect_pos != -1 && cur_effect_pos != last_effect_pos)
         {
@@ -300,7 +287,6 @@ void show_recording()
             do_build = true;
             continue;
         }
-        // Apply the selected effect to the playback in real time. One effect active at a time; "off" (0) clears everything.
         string cur_tag = "";
         string cur_fx = "";
         if (saved_effect_pos == 1)
@@ -350,7 +336,6 @@ void show_recording()
             apply_effects();
             last_fx = cur_fx;
         }
-        // Revert the button label when playback finishes on its own (only after we've actually seen it playing, to avoid a startup race). A pause keeps the label as Stop playback, so skip it while paused.
         if (rec.playback.playing)
             seen_playing = true;
         else if (seen_playing && !playback_paused && form.get_caption(playBtn) == "Stop playback")
@@ -360,18 +345,15 @@ void show_recording()
         }
         if (key_pressed(KEY_ESCAPE))
         {
-            // Leaving the player without saving discards the recording and returns to the idle menu.
             discard_recording();
             return;
         }
-        // Sliders don't have their Enter consumed by the form, so detect those after monitor().
         if (!enter_on_control && key_pressed(KEY_RETURN))
         {
             int efocus = form.get_current_focus();
             if (efocus == volSlider || efocus == pitchSlider || efocus == panSlider || efocus == s1 || efocus == s2 || efocus == s3 || efocus == s4 || efocus == s5 || efocus == s6)
                 enter_on_control = true;
         }
-        // The play/stop button, or Enter while focused on the effect list or any slider, toggles playback.
         bool toggle_play = form.is_pressed(playBtn) || enter_on_control;
         if (toggle_play)
         {
@@ -390,7 +372,6 @@ void show_recording()
                 speak("Playing recorded audio.");
             }
         }
-        // Pause keeps the playback position; the same button resumes from where it left off.
         if (form.is_pressed(pausePlayBtn))
         {
             if (playback_paused)
@@ -430,7 +411,6 @@ void prefsmenu()
     string[]@ all_devices = rec.list_recording_devices(true);
     form.reset();
     form.create_window("Preferences", false);
-    // Capture and conversion settings, listed before the device choosers. Each item's id holds the raw value to store.
     int channelList = form.create_list("Audio channel", 0);
     string[] chan_labels = {"Mono", "Stereo"};
     uint[] chan_values = {1, 2};
@@ -457,7 +437,6 @@ void prefsmenu()
     string[]@ out_devices = get_sound_output_devices();
     int playbackList = form.create_list("Playback device", 0);
     int selected_playback = 0;
-    // The default device sits first, then every other device sorted alphabetically. Index 0 is the reserved slot, so it's skipped.
     for (uint i = 1; i < out_devices.length(); i++)
     {
         if (out_devices[i].lower().find_first("default") < 0) continue;
@@ -472,7 +451,6 @@ void prefsmenu()
         out_names.insert_last(out_devices[i]);
         out_indices.insert_last(int(i));
     }
-    // Insertion sort the remaining devices by name, case-insensitive, keeping each device's original index.
     for (uint a = 1; a < out_names.length(); a++)
     {
         string nk = out_names[a];
@@ -495,7 +473,6 @@ void prefsmenu()
     if (form.get_list_count(playbackList) > 0) form.set_list_position(playbackList, selected_playback);
     int deviceList = form.create_list("Recording device", 0);
     int selected_device = 0;
-    // The default device sits first, then every other device sorted alphabetically.
     for (uint i = 0; i < all_devices.length(); i++)
     {
         if (all_devices[i].lower().find_first("default") < 0) continue;
@@ -516,7 +493,6 @@ void prefsmenu()
         dev_names.insert_last(dev_name);
         dev_indices.insert_last(int(i));
     }
-    // Insertion sort the remaining devices by name, case-insensitive, keeping each device's original index.
     for (uint a = 1; a < dev_names.length(); a++)
     {
         string nk = dev_names[a];
