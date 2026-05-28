@@ -12,10 +12,12 @@ void mainmenu()
         }
         form.reset();
         form.create_window("FlexRecorder", false);
-        int startBtn = -1, stopBtn = -1, prefBtn = -1;
+        int startBtn = -1, stopBtn = -1, pauseBtn = -1, cancelBtn = -1, prefBtn = -1;
         if (is_recording)
         {
             stopBtn = form.create_button("S&top recording");
+            pauseBtn = form.create_button(is_paused ? "&Resume recording" : "&Pause recording");
+            cancelBtn = form.create_button("&Cancel recording");
         }
         else
         {
@@ -37,8 +39,8 @@ void mainmenu()
                     exit();
                 }
             }
-            // Guard against the capture device dropping out mid-recording: if recording stops on its own, finalize and open the player (if any audio was captured).
-            if (is_recording && !rec.recording)
+            // Guard against the capture device dropping out mid-recording: if recording stops on its own, finalize and open the player (if any audio was captured). A paused take looks the same as a dropout, so skip the guard while paused.
+            if (is_recording && !is_paused && !rec.recording)
             {
                 has_recording = rec.stop_recording();
                 is_recording = false;
@@ -56,16 +58,48 @@ void mainmenu()
                 else
                     speak("Failed to start recording.");
             }
+            if (pauseBtn >= 0 && form.is_pressed(pauseBtn))
+            {
+                if (is_paused)
+                {
+                    // Resume by appending onto the captured buffer.
+                    if (rec.start_recording(false, true, audio_samplerate, audio_channel))
+                    {
+                        is_paused = false;
+                        form.set_caption(pauseBtn, "&Pause recording");
+                        speak("Recording resumed.");
+                    }
+                    else
+                        speak("Failed to resume recording.");
+                }
+                else
+                {
+                    // Pause by stopping capture without loading for playback; the buffer is kept.
+                    rec.stop_recording(false);
+                    is_paused = true;
+                    form.set_caption(pauseBtn, "&Resume recording");
+                    speak("Recording paused.");
+                }
+            }
             if (stopBtn >= 0 && form.is_pressed(stopBtn))
             {
                 if (rec.stop_recording())
                 {
                     is_recording = false;
+                    is_paused = false;
                     has_recording = true;
                     break;
                 }
                 else
                     speak("Failed to stop recording.");
+            }
+            if (cancelBtn >= 0 && form.is_pressed(cancelBtn))
+            {
+                rec.clear_recording();
+                is_recording = false;
+                is_paused = false;
+                speak("Recording canceled.");
+                break;
             }
             if (prefBtn >= 0 && form.is_pressed(prefBtn))
             {

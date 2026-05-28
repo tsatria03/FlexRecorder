@@ -8,8 +8,13 @@ When you open FlexRecorder, you'll land on the main menu, which has two buttons:
 Start recording: begins capturing audio from your chosen microphone right away.
 Preferences: lets you choose which audio devices the app uses for playback and recording.
 
-To make a recording, press Start recording. The button changes to Stop recording while you're capturing. When you're finished, press Stop recording and the app takes you straight into the audio player so you can hear what you recorded.
-You can't leave the app while a recording is in progress. Stop the recording first, then press escape on the main menu to exit.
+To make a recording, press Start recording. While you're capturing, three buttons appear:
+
+Stop recording: finishes the recording and takes you straight into the audio player so you can hear what you recorded.
+Pause recording: pauses capture without ending the recording. The button changes to Resume recording, and pressing it again picks up right where you left off, adding onto the same take. You can pause and resume as many times as you like.
+Cancel recording: throws the recording away and returns you to the main menu.
+
+You can't leave the app while a recording is in progress, whether it's running or paused. Stop or cancel the recording first, then press escape on the main menu to exit.
 
 The audio player
 

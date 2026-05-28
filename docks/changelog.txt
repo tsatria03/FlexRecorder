@@ -1,4 +1,5 @@
 New in 1.0.
+Added controls for pauseing, resumeing, and canceling a recording. Alongside the stop button you can now pause a recording and pick it back up where you left off, or cancel it entirely to throw it away and return to the main menu.
 Added audio quality settings to the preferences screen. You can now choose mono or stereo recording, pick a sample rate from 11.025 kHz up to 48 kHz, and set the MP3 conversion quality anywhere from 32 kbps to 320 kbps. These choices are remembered between sessions, just like your device settings.
 Updated the todo list file with the latest bug fix and feature improvements made to the app.
 Added a readme file to explain how this app works in detail.

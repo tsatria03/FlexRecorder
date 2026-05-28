@@ -1,4 +1,5 @@
 bool is_recording = false;
+bool is_paused = false;
 bool has_recording = false;
 
 string playdev="Default";
